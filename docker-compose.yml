@@ -68,6 +68,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       STATS_SERVER_URL: http://stats-server:9090
+      SPRING_PROFILES_ACTIVE: ci
     networks:
       - explore-network
 
