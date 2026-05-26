@@ -48,7 +48,8 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public CompilationDto updateCompilation(Long compId, UpdateCompilationRequest updateRequest) {
-        Compilation compilation = getCompilationOrThrow(compId);
+        Compilation compilation = compilationRepository.findById(compId)
+                .orElseThrow(() -> new NotFoundException("Compilation with id=" + compId + " was not found"));
 
         if (updateRequest.getTitle() != null) {
             compilation.setTitle(updateRequest.getTitle());
@@ -57,7 +58,7 @@ public class CompilationServiceImpl implements CompilationService {
             compilation.setPinned(updateRequest.getPinned());
         }
         if (updateRequest.getEvents() != null) {
-            List<Event> events = getEventsByIds(updateRequest.getEvents());
+            List<Event> events = eventRepository.findAllById(updateRequest.getEvents());
             compilation.setEvents(events);
         }
 
@@ -67,6 +68,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
         List<Compilation> compilations;
@@ -78,13 +80,18 @@ public class CompilationServiceImpl implements CompilationService {
         }
 
         return compilations.stream()
-                .map(CompilationMapper::toCompilationDto)
+                .map(compilation -> {
+                    compilation.getEvents().size();
+                    return CompilationMapper.toCompilationDto(compilation);
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CompilationDto getCompilationById(Long compId) {
         Compilation compilation = getCompilationOrThrow(compId);
+        compilation.getEvents().size();
         return CompilationMapper.toCompilationDto(compilation);
     }
 

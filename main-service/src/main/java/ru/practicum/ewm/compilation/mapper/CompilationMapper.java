@@ -5,6 +5,7 @@ import ru.practicum.ewm.compilation.dto.NewCompilationDto;
 import ru.practicum.ewm.compilation.model.Compilation;
 import ru.practicum.ewm.event.mapper.EventMapper;
 import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.event.model.EventState;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ public class CompilationMapper {
                 .pinned(compilation.getPinned())
                 .events(compilation.getEvents() != null ?
                         compilation.getEvents().stream()
+                                .filter(event -> event.getState() == EventState.PUBLISHED)
                                 .map(EventMapper::toEventShortDto)
                                 .collect(Collectors.toList()) : null)
                 .build();
