@@ -32,7 +32,7 @@ public class AdminUserController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public UserDto createUser(@Valid @RequestBody NewUserRequest newUserRequest) {
         log.info("POST /admin/users - Creating user: {}", newUserRequest);
         return userService.createUser(newUserRequest);

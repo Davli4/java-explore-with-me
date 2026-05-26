@@ -74,6 +74,10 @@ public class ErrorHandler {
             message = ((MethodArgumentNotValidException) e).getBindingResult().getAllErrors().stream()
                     .map(error -> error.getDefaultMessage())
                     .collect(Collectors.joining(", "));
+        } else if (e instanceof ConstraintViolationException) {
+            message = ((ConstraintViolationException) e).getConstraintViolations().stream()
+                    .map(violation -> violation.getMessage())
+                    .collect(Collectors.joining(", "));
         } else {
             message = e.getMessage();
         }

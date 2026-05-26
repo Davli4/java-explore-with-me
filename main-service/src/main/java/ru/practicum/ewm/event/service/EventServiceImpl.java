@@ -173,7 +173,7 @@ public class EventServiceImpl implements EventService {
 
     private User getUserOrThrow(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found"));
+                .orElseThrow(() -> new EventNotFoundException("User with id=" + userId + " was not found"));
     }
 
     private Category getCategoryOrThrow(Long catId) {
@@ -291,15 +291,7 @@ public class EventServiceImpl implements EventService {
                                                 Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
 
-        List<EventState> eventStates = null;
-        if (states != null && !states.isEmpty()) {
-            eventStates = states.stream()
-                    .map(EventState::valueOf)
-                    .collect(Collectors.toList());
-        }
-
-        List<Event> events = eventRepository.findEventsForAdmin(
-                users, eventStates, categories, rangeStart, rangeEnd, pageable);
+        List<Event> events = eventRepository.findEventsForAdmin(pageable);
 
         return events.stream()
                 .map(EventMapper::toEventFullDto)
