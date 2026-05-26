@@ -31,6 +31,12 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
         List<Event> events = getEventsByIds(newCompilationDto.getEvents());
+
+        if (events == null || events.isEmpty()) {
+            events = new ArrayList<>();
+            log.warn("No events found for compilation, creating empty compilation");
+        }
+
         Compilation compilation = CompilationMapper.toCompilation(newCompilationDto, events);
         Compilation savedCompilation = compilationRepository.save(compilation);
         log.info("Created compilation with id: {}", savedCompilation.getId());
