@@ -223,6 +223,11 @@ public class EventServiceImpl implements EventService {
 
         saveHit(request);
 
+        if (text != null && text.length() > 255) {
+            text = text.substring(0, 255);
+            log.warn("Text query was truncated to 255 characters");
+        }
+
         if (rangeStart == null) {
             rangeStart = LocalDateTime.now();
         }
