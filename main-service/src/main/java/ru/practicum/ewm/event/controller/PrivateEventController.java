@@ -51,7 +51,7 @@ public class PrivateEventController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto createEvent(
             @PathVariable Long userId,
             @Valid @RequestBody NewEventDto newEventDto) {

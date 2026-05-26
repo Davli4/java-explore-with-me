@@ -291,8 +291,15 @@ public class EventServiceImpl implements EventService {
                                                 Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
 
+        List<EventState> eventStates = null;
+        if (states != null && !states.isEmpty()) {
+            eventStates = states.stream()
+                    .map(EventState::valueOf)
+                    .collect(Collectors.toList());
+        }
+
         List<Event> events = eventRepository.findEventsForAdmin(
-                users, states, categories, rangeStart, rangeEnd, pageable);
+                users, eventStates, categories, rangeStart, rangeEnd, pageable);
 
         return events.stream()
                 .map(EventMapper::toEventFullDto)
