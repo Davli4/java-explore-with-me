@@ -33,12 +33,19 @@ public class PublicEventController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
             @RequestParam(required = false) String sort,
-            @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
-            @RequestParam(defaultValue = "10") @Positive Integer size,
+            @RequestParam(defaultValue = "0") Integer from,
+            @RequestParam(defaultValue = "10") Integer size,
             HttpServletRequest request) {
 
+        if (from < 0) {
+            throw new IllegalArgumentException("from must be >= 0");
+        }
+        if (size < 1) {
+            throw new IllegalArgumentException("size must be >= 1");
+        }
+
         if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
-            throw new BadRequestException("rangeStart must be before rangeEnd");
+            throw new IllegalArgumentException("rangeStart must be before rangeEnd");
         }
 
         log.info("GET /events - Getting published events with filters");

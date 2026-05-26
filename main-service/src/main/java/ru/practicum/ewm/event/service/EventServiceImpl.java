@@ -59,10 +59,43 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
+        if (newEventDto.getDescription() == null || newEventDto.getDescription().trim().isEmpty()) {
+            throw new BadRequestException("Description must not be blank");
+        }
+        if (newEventDto.getDescription().length() < 20) {
+            throw new BadRequestException("Description must be at least 20 characters");
+        }
+
+        if (newEventDto.getAnnotation() == null || newEventDto.getAnnotation().trim().isEmpty()) {
+            throw new BadRequestException("Annotation must not be blank");
+        }
+        if (newEventDto.getAnnotation().length() < 20) {
+            throw new BadRequestException("Annotation must be at least 20 characters");
+        }
+
+        if (newEventDto.getTitle() == null || newEventDto.getTitle().trim().isEmpty()) {
+            throw new BadRequestException("Title must not be blank");
+        }
+        if (newEventDto.getTitle().length() < 3) {
+            throw new BadRequestException("Title must be at least 3 characters");
+        }
+
+        if (newEventDto.getCategory() == null) {
+            throw new BadRequestException("Category must not be null");
+        }
+
+        if (newEventDto.getLocation() == null) {
+            throw new BadRequestException("Location must not be null");
+        }
+
         User initiator = getUserOrThrow(userId);
         Category category = getCategoryOrThrow(newEventDto.getCategory());
 
         LocalDateTime now = LocalDateTime.now();
+
+        if (newEventDto.getEventDate() == null) {
+            throw new BadRequestException("Event date must not be null");
+        }
         if (newEventDto.getEventDate().isBefore(now.plusHours(2))) {
             throw new BadRequestException("Event date must be at least 2 hours from now");
         }
