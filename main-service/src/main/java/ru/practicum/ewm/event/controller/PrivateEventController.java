@@ -10,6 +10,7 @@ import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.dto.UpdateEventUserRequest;
 import ru.practicum.ewm.event.service.EventService;
+import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.request.dto.ParticipationRequestDto;
@@ -30,10 +31,23 @@ public class PrivateEventController {
     @GetMapping
     public List<EventShortDto> getUserEvents(
             @PathVariable Long userId,
-            @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
-            @RequestParam(defaultValue = "10") @Positive Integer size) {
+            @RequestParam(required = false) @PositiveOrZero Integer from,
+            @RequestParam(required = false) @Positive Integer size,
+            @RequestParam(required = false) String sort) {
+
+        if (from != null && from < 0) {
+            throw new BadRequestException("from must be >= 0");
+        }
+
+        if (size != null && size <= 0) {
+            throw new BadRequestException("size must be > 0");
+        }
+
+        int validFrom = from != null ? from : 0;
+        int validSize = size != null ? size : 10;
+
         log.info("GET /users/{}/events - Getting user events", userId);
-        return eventService.getUserEvents(userId, from, size);
+        return eventService.getUserEvents(userId, validFrom, validSize);
     }
 
     @PostMapping
