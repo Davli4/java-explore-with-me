@@ -220,35 +220,6 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-//    @Override
-//    public List<EventShortDto> getPublishedEvents(String text, List<Long> categories, Boolean paid,
-//                                                  LocalDateTime rangeStart, LocalDateTime rangeEnd,
-//                                                  Boolean onlyAvailable, String sort,
-//                                                  Integer from, Integer size, HttpServletRequest request) {
-//
-//        saveHit(request);
-//
-//        if (text != null && text.length() > 200) {
-//            text = text.substring(0, 200);
-//        }
-//
-//        Pageable pageable = createPageable(from, size, sort);
-//
-//        List<Event> events = eventRepository.findPublishedEvents(
-//                text, categories, paid, pageable);
-//
-//        if (onlyAvailable != null && onlyAvailable) {
-//            events = events.stream()
-//                    .filter(event -> event.getParticipantLimit() == 0 ||
-//                            event.getConfirmedRequests() < event.getParticipantLimit())
-//                    .collect(Collectors.toList());
-//        }
-//
-//        return events.stream()
-//                .map(EventMapper::toEventShortDto)
-//                .collect(Collectors.toList());
-//    }
-
     @Override
     public List<EventShortDto> getPublishedEvents(String text, List<Long> categories, Boolean paid,
                                                   LocalDateTime rangeStart, LocalDateTime rangeEnd,
