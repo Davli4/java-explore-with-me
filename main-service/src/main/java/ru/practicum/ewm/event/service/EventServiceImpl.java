@@ -16,6 +16,7 @@ import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.ConflictException;
+import ru.practicum.ewm.exception.EventNotFoundException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.request.dto.EventRequestStatusUpdateResult;
@@ -149,7 +150,7 @@ public class EventServiceImpl implements EventService {
 
         if (updateRequest.getEventDate() != null &&
                 updateRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ConflictException("Event date must be at least 2 hours from now");
+            throw new IllegalArgumentException("Event date must be at least 2 hours from now");
         }
 
         updateEventFields(event, updateRequest);
@@ -181,8 +182,12 @@ public class EventServiceImpl implements EventService {
     }
 
     private Event getEventOrThrow(Long eventId) {
+        log.info("Looking for event with id: {}", eventId);
         return eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+                .orElseThrow(() -> {
+                    log.error("Event with id={} not found", eventId);
+                    return new EventNotFoundException("Event with id=" + eventId + " was not found");
+                });
     }
 
     private void updateEventFields(Event event, UpdateEventUserRequest updateRequest) {
@@ -254,7 +259,6 @@ public class EventServiceImpl implements EventService {
 
         Pageable pageable = createPageable(from, size, sort);
 
-        // Временно - просто все опубликованные события без фильтрации
         List<Event> events = eventRepository.findAllPublishedEvents(pageable);
 
         return events.stream()
@@ -287,15 +291,8 @@ public class EventServiceImpl implements EventService {
                                                 Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
 
-        List<EventState> eventStates = null;
-        if (states != null && !states.isEmpty()) {
-            eventStates = states.stream()
-                    .map(EventState::valueOf)
-                    .collect(Collectors.toList());
-        }
-
         List<Event> events = eventRepository.findEventsForAdmin(
-                users, eventStates, categories, rangeStart, rangeEnd, pageable);
+                users, states, categories, rangeStart, rangeEnd, pageable);
 
         return events.stream()
                 .map(EventMapper::toEventFullDto)
@@ -305,11 +302,12 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequest updateRequest) {
+        log.info("Updating event with id: {}", eventId);
         Event event = getEventOrThrow(eventId);
 
         if (updateRequest.getEventDate() != null &&
                 updateRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
-            throw new ConflictException("Event date must be at least 1 hour from now");
+            throw new IllegalArgumentException("Event date must be at least 1 hour from now");
         }
 
         if (updateRequest.getAnnotation() != null) {

@@ -24,7 +24,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "(:rangeStart IS NULL OR e.eventDate >= :rangeStart) AND " +
             "(:rangeEnd IS NULL OR e.eventDate <= :rangeEnd)")
     List<Event> findEventsForAdmin(@Param("users") List<Long> users,
-                                   @Param("states") List<EventState> states,
+                                   @Param("states") List<String> states,
                                    @Param("categories") List<Long> categories,
                                    @Param("rangeStart") LocalDateTime rangeStart,
                                    @Param("rangeEnd") LocalDateTime rangeEnd,
@@ -42,7 +42,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 //                                    @Param("paid") Boolean paid,
 //                                    Pageable pageable);
 
-    @Query(value = "SELECT * FROM events WHERE state = 'PUBLISHED'", nativeQuery = true)
+    @Query("SELECT e FROM Event e WHERE e.state = 'PUBLISHED'")
     List<Event> findAllPublishedEvents(Pageable pageable);
 
     boolean existsByCategoryId(Long catId);

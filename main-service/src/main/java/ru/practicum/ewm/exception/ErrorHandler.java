@@ -40,6 +40,18 @@ public class ErrorHandler {
                 .build();
     }
 
+    @ExceptionHandler(EventNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleEventNotFoundException(EventNotFoundException e) {
+        log.error("Event not found (bad request): {}", e.getMessage());
+        return ApiError.builder()
+                .message(e.getMessage())
+                .reason("Incorrectly made request.")
+                .status(HttpStatus.BAD_REQUEST)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleConflictException(ConflictException e) {
