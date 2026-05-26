@@ -30,17 +30,20 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                    @Param("rangeEnd") LocalDateTime rangeEnd,
                                    Pageable pageable);
 
-    @Query(value = "SELECT * FROM events e WHERE e.state = 'PUBLISHED' " +
-            "AND (:text IS NULL OR :text = '' OR " +
-            "e.annotation ILIKE CONCAT('%', CAST(:text AS text), '%') OR " +
-            "e.description ILIKE CONCAT('%', CAST(:text AS text), '%')) " +
-            "AND (:categories IS NULL OR e.category_id IN (:categories)) " +
-            "AND (:paid IS NULL OR e.paid = :paid)",
-            nativeQuery = true)
-    List<Event> findPublishedEvents(@Param("text") String text,
-                                    @Param("categories") List<Long> categories,
-                                    @Param("paid") Boolean paid,
-                                    Pageable pageable);
+//    @Query(value = "SELECT * FROM events e WHERE e.state = 'PUBLISHED' " +
+//            "AND (:text IS NULL OR :text = '' OR " +
+//            "e.annotation ILIKE CONCAT('%', CAST(:text AS text), '%') OR " +
+//            "e.description ILIKE CONCAT('%', CAST(:text AS text), '%')) " +
+//            "AND (:categories IS NULL OR e.category_id IN (:categories)) " +
+//            "AND (:paid IS NULL OR e.paid = :paid)",
+//            nativeQuery = true)
+//    List<Event> findPublishedEvents(@Param("text") String text,
+//                                    @Param("categories") List<Long> categories,
+//                                    @Param("paid") Boolean paid,
+//                                    Pageable pageable);
+
+    @Query(value = "SELECT * FROM events WHERE state = 'PUBLISHED'", nativeQuery = true)
+    List<Event> findAllPublishedEvents(Pageable pageable);
 
     boolean existsByCategoryId(Long catId);
 }
