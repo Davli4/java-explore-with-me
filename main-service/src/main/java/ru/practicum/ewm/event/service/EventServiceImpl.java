@@ -193,13 +193,20 @@ public class EventServiceImpl implements EventService {
         if (rangeStart == null) {
             rangeStart = LocalDateTime.now();
         }
+        if (rangeEnd == null) {
+            rangeEnd = LocalDateTime.now().plusYears(100);
+        }
+
+        if (text != null && text.trim().isEmpty()) {
+            text = null;
+        }
 
         Pageable pageable = createPageable(from, size, sort);
 
         List<Event> events = eventRepository.findPublishedEvents(
                 text, categories, paid, rangeStart, rangeEnd, pageable);
 
-        if (onlyAvailable) {
+        if (onlyAvailable != null && onlyAvailable) {
             events = events.stream()
                     .filter(this::isEventAvailable)
                     .collect(Collectors.toList());
