@@ -227,21 +227,22 @@ public class EventServiceImpl implements EventService {
             rangeStart = LocalDateTime.now();
         }
         if (rangeEnd == null) {
-            rangeEnd = LocalDateTime.now().plusYears(100);
+            rangeEnd = LocalDateTime.now().plusYears(10);
         }
 
         if (text != null && text.trim().isEmpty()) {
             text = null;
         }
 
-        Pageable pageable = createPageable(from, size, sort);
+        Pageable pageable = PageRequest.of(from / size, size);
 
         List<Event> events = eventRepository.findPublishedEvents(
                 text, categories, paid, rangeStart, rangeEnd, pageable);
 
         if (onlyAvailable != null && onlyAvailable) {
             events = events.stream()
-                    .filter(this::isEventAvailable)
+                    .filter(event -> event.getParticipantLimit() == 0 ||
+                            event.getConfirmedRequests() < event.getParticipantLimit())
                     .collect(Collectors.toList());
         }
 
@@ -275,8 +276,15 @@ public class EventServiceImpl implements EventService {
                                                 Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
 
+        List<EventState> eventStates = null;
+        if (states != null && !states.isEmpty()) {
+            eventStates = states.stream()
+                    .map(EventState::valueOf)
+                    .collect(Collectors.toList());
+        }
+
         List<Event> events = eventRepository.findEventsForAdmin(
-                users, states, categories, rangeStart, rangeEnd, pageable);
+                users, eventStates, categories, rangeStart, rangeEnd, pageable);
 
         return events.stream()
                 .map(EventMapper::toEventFullDto)

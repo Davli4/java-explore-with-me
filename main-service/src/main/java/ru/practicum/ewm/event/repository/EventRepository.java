@@ -1,11 +1,11 @@
 package ru.practicum.ewm.event.repository;
 
 import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.event.model.EventState;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.practicum.ewm.event.model.EventState;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,14 +24,14 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "(:rangeStart IS NULL OR e.eventDate >= :rangeStart) AND " +
             "(:rangeEnd IS NULL OR e.eventDate <= :rangeEnd)")
     List<Event> findEventsForAdmin(@Param("users") List<Long> users,
-                                   @Param("states") List<String> states,
+                                   @Param("states") List<EventState> states,
                                    @Param("categories") List<Long> categories,
                                    @Param("rangeStart") LocalDateTime rangeStart,
                                    @Param("rangeEnd") LocalDateTime rangeEnd,
                                    Pageable pageable);
 
     @Query("SELECT e FROM Event e WHERE " +
-            "e.state = 'PUBLISHED' AND " +
+            "e.state = ru.practicum.ewm.event.model.EventState.PUBLISHED AND " +
             "(:text IS NULL OR :text = '' OR " +
             "LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')) OR " +
             "LOWER(e.description) LIKE LOWER(CONCAT('%', :text, '%'))) AND " +
@@ -45,10 +45,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                     @Param("rangeStart") LocalDateTime rangeStart,
                                     @Param("rangeEnd") LocalDateTime rangeEnd,
                                     Pageable pageable);
-
-    @Query("SELECT e FROM Event e WHERE e.state = :state AND e.id IN :eventIds")
-    List<Event> findPublishedEventsByIds(@Param("eventIds") List<Long> eventIds,
-                                         @Param("state") EventState state);
 
     boolean existsByCategoryId(Long catId);
 }
