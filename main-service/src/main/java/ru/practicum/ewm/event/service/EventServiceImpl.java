@@ -223,9 +223,8 @@ public class EventServiceImpl implements EventService {
 
         saveHit(request);
 
-        if (text != null && text.length() > 255) {
-            text = text.substring(0, 255);
-            log.warn("Text query was truncated to 255 characters");
+        if (text != null && text.length() > 100) {
+            text = text.substring(0, 100);
         }
 
         if (rangeStart == null) {
