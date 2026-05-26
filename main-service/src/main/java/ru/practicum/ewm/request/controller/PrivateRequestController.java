@@ -28,7 +28,8 @@ public class PrivateRequestController {
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto addParticipationRequest(
             @PathVariable Long userId,
-            @RequestParam Long eventId) {
+            @RequestParam(required = true) Long eventId) {
+
         log.info("POST /users/{}/requests - Adding request for event {}", userId, eventId);
         return requestService.addParticipationRequest(userId, eventId);
     }
