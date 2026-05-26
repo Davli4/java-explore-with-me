@@ -7,17 +7,18 @@ import ru.practicum.ewm.event.mapper.EventMapper;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.EventState;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CompilationMapper {
 
-    public static Compilation toCompilation(NewCompilationDto newCompilationDto, List<Event> events) {
-        return Compilation.builder()
-                .title(newCompilationDto.getTitle())
-                .pinned(newCompilationDto.getPinned() != null ? newCompilationDto.getPinned() : false)
-                .events(events)
-                .build();
+    public static Compilation toCompilation(NewCompilationDto dto, List<Event> events) {
+        Compilation compilation = new Compilation();
+        compilation.setTitle(dto.getTitle());
+        compilation.setPinned(dto.getPinned() != null ? dto.getPinned() : false);
+        compilation.setEvents(events != null ? events : new ArrayList<>());
+        return compilation;
     }
 
     public static CompilationDto toCompilationDto(Compilation compilation) {
