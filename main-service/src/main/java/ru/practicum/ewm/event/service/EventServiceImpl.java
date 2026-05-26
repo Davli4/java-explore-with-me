@@ -223,25 +223,14 @@ public class EventServiceImpl implements EventService {
 
         saveHit(request);
 
-        if (text != null && text.length() > 100) {
-            text = text.substring(0, 100);
+        if (text != null && text.length() > 200) {
+            text = text.substring(0, 200);
         }
 
-        if (rangeStart == null) {
-            rangeStart = LocalDateTime.now();
-        }
-        if (rangeEnd == null) {
-            rangeEnd = LocalDateTime.now().plusYears(10);
-        }
-
-        if (text != null && text.trim().isEmpty()) {
-            text = null;
-        }
-
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable pageable = createPageable(from, size, sort);
 
         List<Event> events = eventRepository.findPublishedEvents(
-                text, categories, paid, rangeStart, rangeEnd, pageable);
+                text, categories, paid, pageable);
 
         if (onlyAvailable != null && onlyAvailable) {
             events = events.stream()
