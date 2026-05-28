@@ -52,10 +52,10 @@ public class Event {
     @Column(name = "participant_limit", nullable = false)
     private Integer participantLimit;
 
-    @Column(name = "confirmed_requests")
+    @Column(name = "confirmed_requests",  nullable = false)
     private Integer confirmedRequests;
 
-    @Column(name = "created_on")
+    @Column(name = "created_on", nullable = false, updatable = false)
     private LocalDateTime createdOn;
 
     @Column(name = "published_on")
@@ -70,10 +70,6 @@ public class Event {
     @Column(nullable = false, length = 120)
     private String title;
 
-    @Column(name = "views")
+    @Column(name = "views",  nullable = false)
     private Long views;
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }
