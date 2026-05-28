@@ -28,4 +28,6 @@ public class EventCreatedDto {
     private Boolean requestModeration;
     private EventState state;
     private String title;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdOn;
 }
