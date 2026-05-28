@@ -110,7 +110,7 @@ public class EventServiceImpl implements EventService {
             throw new BadRequestException("Event date must not be null");
         }
         if (newEventDto.getEventDate().isBefore(now.plusHours(2))) {
-            throw new BadRequestException("Event date must be at least 2 hours from now");
+            throw new IllegalArgumentException("Event date must be at least 2 hours from now");
         }
 
         Event event = EventMapper.toEvent(newEventDto, category, initiator);
@@ -501,12 +501,16 @@ public class EventServiceImpl implements EventService {
     }
 
     private void saveHit(HttpServletRequest request) {
-        statsClient.saveHit(
-                APP_NAME,
-                request.getRequestURI(),
-                request.getRemoteAddr(),
-                LocalDateTime.now()
-        );
+        try {
+            statsClient.saveHit(
+                    APP_NAME,
+                    request.getRequestURI(),
+                    request.getRemoteAddr(),
+                    LocalDateTime.now()
+            );
+        } catch (Exception e) {
+            log.error("Failed to save hit: {}", e.getMessage());
+        }
     }
 
     private Long getEventViews(Event event) {
