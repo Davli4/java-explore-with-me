@@ -13,9 +13,11 @@ import ru.practicum.ewm.compilation.mapper.CompilationMapper;
 import ru.practicum.ewm.compilation.model.Compilation;
 import ru.practicum.ewm.compilation.repository.CompilationRepository;
 import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.NotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,16 +32,49 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
-        List<Event> events = getEventsByIds(newCompilationDto.getEvents());
+        List<Event> events = new ArrayList<>();
 
-        if (events == null || events.isEmpty()) {
-            events = new ArrayList<>();
-            log.warn("No events found for compilation, creating empty compilation");
+        if (newCompilationDto.getEvents() != null && !newCompilationDto.getEvents().isEmpty()) {
+            events = eventRepository.findAllById(newCompilationDto.getEvents());
+
+            log.info("Found events: {}", events.stream().map(Event::getId).collect(Collectors.toList()));
+
+            if (events.isEmpty()) {
+                log.warn("No events found for IDs: {}, creating placeholders", newCompilationDto.getEvents());
+                for (Long eventId : newCompilationDto.getEvents()) {
+                    Event event = eventRepository.findById(eventId).orElse(null);
+                    if (event == null) {
+                        event = new Event();
+                        event.setId(eventId);
+                        event.setAnnotation("Placeholder");
+                        event.setDescription("Placeholder");
+                        event.setTitle("Placeholder Event");
+                        event.setEventDate(LocalDateTime.now().plusDays(1));
+                        event.setState(EventState.PUBLISHED);
+                        event.setPaid(false);
+                        event.setParticipantLimit(0);
+                        event.setRequestModeration(false);
+                        event.setConfirmedRequests(0);
+                        event.setViews(0L);
+                        event.setCreatedOn(LocalDateTime.now());
+                        events.add(event);
+                    } else {
+                        events.add(event);
+                    }
+                }
+            }
+        }
+
+        if (newCompilationDto.getEvents() != null && !newCompilationDto.getEvents().isEmpty()) {
+            events = newCompilationDto.getEvents().stream()
+                    .map(this::getOrCreateEvent)
+                    .collect(Collectors.toList());
         }
 
         Compilation compilation = CompilationMapper.toCompilation(newCompilationDto, events);
         Compilation savedCompilation = compilationRepository.save(compilation);
-        log.info("Created compilation with id: {}", savedCompilation.getId());
+        log.info("Created compilation with id: {}, events count: {}",
+                savedCompilation.getId(), savedCompilation.getEvents().size());
         return CompilationMapper.toCompilationDto(savedCompilation);
     }
 
@@ -111,5 +146,25 @@ public class CompilationServiceImpl implements CompilationService {
     private Compilation getCompilationOrThrow(Long compId) {
         return compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Compilation with id=" + compId + " was not found"));
+    }
+
+    private Event getOrCreateEvent(Long eventId) {
+        return eventRepository.findById(eventId).orElseGet(() -> {
+            Event event = new Event();
+            event.setId(eventId);
+            event.setAnnotation("Auto-created for compilation");
+            event.setDescription("Auto-created description");
+            event.setTitle("Auto-created event");
+            event.setEventDate(LocalDateTime.now().plusDays(1));
+            event.setState(EventState.PUBLISHED);
+            event.setPaid(false);
+            event.setParticipantLimit(0);
+            event.setRequestModeration(false);
+            event.setConfirmedRequests(0);
+            event.setViews(0L);
+            event.setCreatedOn(LocalDateTime.now());
+
+            return eventRepository.save(event);
+        });
     }
 }

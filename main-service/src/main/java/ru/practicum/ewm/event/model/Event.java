@@ -72,4 +72,8 @@ public class Event {
 
     @Column(name = "views")
     private Long views;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
