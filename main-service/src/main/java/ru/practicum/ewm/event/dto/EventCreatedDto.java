@@ -1,6 +1,7 @@
 package ru.practicum.ewm.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,11 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonPropertyOrder({
+        "id", "title", "annotation", "category", "paid",
+        "eventDate", "initiator", "description", "participantLimit",
+        "state", "createdOn", "location", "requestModeration"
+})
 public class EventCreatedDto {
     private Long id;
     private String annotation;
