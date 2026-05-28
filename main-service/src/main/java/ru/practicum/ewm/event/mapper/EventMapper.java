@@ -62,19 +62,19 @@ public class EventMapper {
                 .id(event.getId())
                 .annotation(event.getAnnotation())
                 .category(CategoryMapper.toCategoryDto(event.getCategory()))
-                .confirmedRequests(event.getConfirmedRequests() != null ? event.getConfirmedRequests().longValue() : 0L)
-                .createdOn(event.getCreatedOn())
+                //.confirmedRequests(event.getConfirmedRequests() != null ? event.getConfirmedRequests().longValue() : 0L)
+                //.createdOn(event.getCreatedOn())
                 .description(event.getDescription())
                 .eventDate(event.getEventDate())
                 .initiator(UserMapper.toUserShortDto(event.getInitiator()))
                 .location(toLocationDto(event.getLocation()))
                 .paid(event.getPaid())
                 .participantLimit(event.getParticipantLimit())
-                .publishedOn(event.getPublishedOn())
+                //.publishedOn(event.getPublishedOn())
                 .requestModeration(event.getRequestModeration())
                 .state(event.getState())
                 .title(event.getTitle())
-                .views(event.getViews() != null ? event.getViews() : 0L)
+                //.views(event.getViews() != null ? event.getViews() : 0L)
                 .build();
     }
 }
