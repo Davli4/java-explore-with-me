@@ -29,8 +29,11 @@ public class EventCreatedDto {
     private LocalDateTime eventDate;
     private UserShortDto initiator;
     private LocationDto location;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Boolean paid;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Integer participantLimit;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Boolean requestModeration;
     private EventState state;
     private String title;
