@@ -232,6 +232,51 @@ public class EventServiceImpl implements EventService {
 
         List<Event> events = eventRepository.findAllPublishedEvents(pageable);
 
+        if (text != null && !text.isEmpty()) {
+            String lowerText = text.toLowerCase();
+            events = events.stream()
+                    .filter(e -> e.getAnnotation().toLowerCase().contains(lowerText) ||
+                            e.getDescription().toLowerCase().contains(lowerText))
+                    .collect(Collectors.toList());
+        }
+
+        if (categories != null && !categories.isEmpty()) {
+            events = events.stream()
+                    .filter(e -> categories.contains(e.getCategory().getId()))
+                    .collect(Collectors.toList());
+        }
+
+        if (paid != null) {
+            events = events.stream()
+                    .filter(e -> e.getPaid().equals(paid))
+                    .collect(Collectors.toList());
+        }
+
+        if (rangeStart != null) {
+            events = events.stream()
+                    .filter(e -> e.getEventDate().isAfter(rangeStart))
+                    .collect(Collectors.toList());
+        }
+
+        if (rangeEnd != null) {
+            events = events.stream()
+                    .filter(e -> e.getEventDate().isBefore(rangeEnd))
+                    .collect(Collectors.toList());
+        }
+
+        if (onlyAvailable != null && onlyAvailable) {
+            events = events.stream()
+                    .filter(e -> e.getParticipantLimit() == 0 ||
+                            e.getConfirmedRequests() < e.getParticipantLimit())
+                    .collect(Collectors.toList());
+        }
+
+        if (sort != null && sort.equals("VIEWS")) {
+            events.sort((e1, e2) -> Long.compare(e2.getViews(), e1.getViews()));
+        } else {
+            events.sort((e1, e2) -> e1.getEventDate().compareTo(e2.getEventDate()));
+        }
+
         return events.stream()
                 .map(EventMapper::toEventShortDto)
                 .collect(Collectors.toList());
@@ -468,7 +513,7 @@ public class EventServiceImpl implements EventService {
         if (sort != null && sort.equals("VIEWS")) {
             return PageRequest.of(from / size, size, Sort.by("views").descending());
         } else {
-            return PageRequest.of(from / size, size, Sort.by("eventDate").ascending());
+            return PageRequest.of(from / size, size, Sort.by("event_date").descending());
         }
     }
 
