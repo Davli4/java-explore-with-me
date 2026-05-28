@@ -54,7 +54,12 @@ public class PrivateEventController {
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto createEvent(
             @PathVariable Long userId,
-            @Valid @RequestBody NewEventDto newEventDto) {
+            @Valid @RequestBody(required = false) NewEventDto newEventDto) {
+
+        if (newEventDto == null) {
+            throw new BadRequestException("Request body is missing");
+        }
+
         log.info("POST /users/{}/events - Creating new event", userId);
         return eventService.createEvent(userId, newEventDto);
     }

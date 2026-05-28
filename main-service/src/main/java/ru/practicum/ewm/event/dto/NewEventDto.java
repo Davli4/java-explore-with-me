@@ -1,6 +1,7 @@
 package ru.practicum.ewm.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class NewEventDto {
 
     @NotBlank
     @Size(min = 20, max = 7000)
+    @JsonRawValue
     private String description;
 
     @NotNull

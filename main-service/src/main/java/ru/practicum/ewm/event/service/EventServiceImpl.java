@@ -60,6 +60,18 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
+        if (newEventDto.getDescription() != null) {
+            String clean = newEventDto.getDescription().replaceAll("\\r\\n|\\r|\\n", " ");
+            newEventDto.setDescription(clean);
+        }
+        if (newEventDto.getAnnotation() != null) {
+            String clean = newEventDto.getAnnotation().replaceAll("\\r\\n|\\r|\\n", " ");
+            newEventDto.setAnnotation(clean);
+        }
+        if (newEventDto.getTitle() != null) {
+            String clean = newEventDto.getTitle().replaceAll("\\r\\n|\\r|\\n", " ");
+            newEventDto.setTitle(clean);
+        }
         if (newEventDto.getDescription() == null || newEventDto.getDescription().trim().isEmpty()) {
             throw new BadRequestException("Description must not be blank");
         }
