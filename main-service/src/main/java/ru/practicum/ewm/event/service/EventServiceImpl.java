@@ -148,7 +148,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventFullDto updateUserEvent(Long userId, Long eventId, UpdateEventUserRequest updateRequest) {
+    public EventUpdateResponseDto  updateUserEvent(Long userId, Long eventId, UpdateEventUserRequest updateRequest) {
         getUserOrThrow(userId);
         Event event = getEventOrThrow(eventId);
 
@@ -180,7 +180,7 @@ public class EventServiceImpl implements EventService {
 
         Event updatedEvent = eventRepository.save(event);
         log.info("Updated event {} by user {}", eventId, userId);
-        return EventMapper.toEventFullDto(updatedEvent);
+        return EventMapper.toEventUpdateResponseDto(updatedEvent);
     }
 
     private User getUserOrThrow(Long userId) {

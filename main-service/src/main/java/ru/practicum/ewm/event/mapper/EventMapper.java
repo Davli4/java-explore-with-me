@@ -94,4 +94,22 @@ public class EventMapper {
                 .title(event.getTitle())
                 .build();
     }
+
+    public static EventUpdateResponseDto toEventUpdateResponseDto(Event event) {
+        return EventUpdateResponseDto.builder()
+                .id(event.getId())
+                .annotation(event.getAnnotation())
+                .category(event.getCategory().getId())
+                .description(event.getDescription())
+                .eventDate(event.getEventDate())
+                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
+                .location(toLocationDto(event.getLocation()))
+                .paid(event.getPaid())
+                .participantLimit(event.getParticipantLimit())
+                .requestModeration(event.getRequestModeration())
+                .state(event.getState())
+                .title(event.getTitle())
+                .createdOn(event.getCreatedOn())
+                .build();
+    }
 }
