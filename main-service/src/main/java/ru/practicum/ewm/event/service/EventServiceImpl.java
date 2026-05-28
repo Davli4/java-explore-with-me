@@ -457,14 +457,18 @@ public class EventServiceImpl implements EventService {
             }
         }
 
+        int currentConfirmed = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
+        int availableSlots = event.getParticipantLimit() - currentConfirmed;
+
+        if (availableSlots <= 0) {
+            throw new ConflictException("The participant limit has been reached");
+        }
+
         EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult();
         List<Request> confirmedRequests = new ArrayList<>();
         List<Request> rejectedRequests = new ArrayList<>();
 
         if (updateRequest.getStatus() == RequestStatus.CONFIRMED) {
-            int currentConfirmed = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
-            int availableSlots = event.getParticipantLimit() - currentConfirmed;
-
             for (Request request : requests) {
                 if (availableSlots > 0) {
                     request.setStatus(RequestStatus.CONFIRMED);

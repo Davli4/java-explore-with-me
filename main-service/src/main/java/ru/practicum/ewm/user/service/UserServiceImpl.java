@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.user.dto.NewUserRequest;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.mapper.UserMapper;
@@ -39,6 +40,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto createUser(NewUserRequest newUserRequest) {
+        if (userRepository.findByEmail(newUserRequest.getEmail()).isPresent()) {
+            throw new ConflictException("Email already exists");
+        }
+
         User user = UserMapper.toUser(newUserRequest);
         User savedUser = userRepository.save(user);
         log.info("Created user with id: {}", savedUser.getId());
