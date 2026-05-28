@@ -41,14 +41,11 @@ public class NewEventDto {
     @Valid
     private LocationDto location;
 
-    @JsonDeserialize(using = NumberDeserializers.BooleanDeserializer.class)
     private Boolean paid;
 
     @PositiveOrZero
-    @JsonDeserialize(using = NumberDeserializers.IntegerDeserializer.class)
     private Integer participantLimit;
 
-    @JsonDeserialize(using = NumberDeserializers.BooleanDeserializer.class)
     private Boolean requestModeration;
 
     @NotBlank
