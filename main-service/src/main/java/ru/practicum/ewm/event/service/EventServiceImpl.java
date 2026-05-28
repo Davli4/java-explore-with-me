@@ -131,7 +131,7 @@ public class EventServiceImpl implements EventService {
 
         Event savedEvent = eventRepository.save(event);
         log.info("Created event {} for user {}", savedEvent.getId(), userId);
-        return EventMapper.toEventCreatedDto(savedEvent);
+        return EventMapper.toEventCreatedDto(savedEvent, newEventDto);
     }
 
     @Override

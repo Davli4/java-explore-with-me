@@ -2,6 +2,7 @@ package ru.practicum.ewm.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,9 +30,12 @@ public class EventCreatedDto {
     private LocalDateTime eventDate;
     private UserShortDto initiator;
     private LocationDto location;
-    private Boolean paid;
-    private Integer participantLimit;
-    private Boolean requestModeration;
+    @JsonRawValue
+    private Object paid;
+    @JsonRawValue
+    private Object participantLimit;
+    @JsonRawValue
+    private Object requestModeration;
     private EventState state;
     private String title;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

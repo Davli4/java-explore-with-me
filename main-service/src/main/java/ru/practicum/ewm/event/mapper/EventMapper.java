@@ -78,21 +78,21 @@ public class EventMapper {
                 .build();
     }
 
-    public static EventCreatedDto toEventCreatedDto(Event event) {
+    public static EventCreatedDto toEventCreatedDto(Event event, NewEventDto originalRequest) {
         return EventCreatedDto.builder()
                 .id(event.getId())
+                .title(event.getTitle())
                 .annotation(event.getAnnotation())
                 .category(event.getCategory().getId())
-                .description(event.getDescription())
+                .paid(originalRequest.getPaid())
                 .eventDate(event.getEventDate())
                 .initiator(UserMapper.toUserShortDto(event.getInitiator()))
-                .location(toLocationDto(event.getLocation()))
-                .paid(event.getPaid())
-                .participantLimit(event.getParticipantLimit())
-                .requestModeration(event.getRequestModeration())
+                .description(event.getDescription())
+                .participantLimit(originalRequest.getParticipantLimit())
                 .state(event.getState())
-                .title(event.getTitle())
                 .createdOn(event.getCreatedOn())
+                .location(toLocationDto(event.getLocation()))
+                .requestModeration(originalRequest.getRequestModeration())
                 .build();
     }
 
