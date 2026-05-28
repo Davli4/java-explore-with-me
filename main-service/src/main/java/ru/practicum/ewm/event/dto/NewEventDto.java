@@ -2,6 +2,8 @@ package ru.practicum.ewm.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.std.NumberDeserializers;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,11 +41,14 @@ public class NewEventDto {
     @Valid
     private LocationDto location;
 
+    @JsonDeserialize(using = NumberDeserializers.BooleanDeserializer.class)
     private Boolean paid;
 
     @PositiveOrZero
+    @JsonDeserialize(using = NumberDeserializers.IntegerDeserializer.class)
     private Integer participantLimit;
 
+    @JsonDeserialize(using = NumberDeserializers.BooleanDeserializer.class)
     private Boolean requestModeration;
 
     @NotBlank
