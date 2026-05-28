@@ -84,15 +84,17 @@ public class EventMapper {
                 .title(event.getTitle())
                 .annotation(event.getAnnotation())
                 .category(event.getCategory().getId())
-                .paid(originalRequest.getPaid())
+                .paid(originalRequest.getPaid() != null ? originalRequest.getPaid() : event.getPaid())
                 .eventDate(event.getEventDate())
                 .initiator(UserMapper.toUserShortDto(event.getInitiator()))
                 .description(event.getDescription())
-                .participantLimit(originalRequest.getParticipantLimit())
+                .participantLimit(originalRequest.getParticipantLimit() != null ?
+                        originalRequest.getParticipantLimit() : event.getParticipantLimit())
                 .state(event.getState())
                 .createdOn(event.getCreatedOn())
                 .location(toLocationDto(event.getLocation()))
-                .requestModeration(originalRequest.getRequestModeration())
+                .requestModeration(originalRequest.getRequestModeration() != null ?
+                        originalRequest.getRequestModeration() : event.getRequestModeration())
                 .build();
     }
 
