@@ -77,4 +77,21 @@ public class EventMapper {
                 .views(event.getViews() != null ? event.getViews() : 0L)
                 .build();
     }
+
+    public static EventCreatedDto toEventCreatedDto(Event event) {
+        return EventCreatedDto.builder()
+                .id(event.getId())
+                .annotation(event.getAnnotation())
+                .category(event.getCategory().getId())
+                .description(event.getDescription())
+                .eventDate(event.getEventDate())
+                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
+                .location(toLocationDto(event.getLocation()))
+                .paid(event.getPaid())
+                .participantLimit(event.getParticipantLimit())
+                .requestModeration(event.getRequestModeration())
+                .state(event.getState())
+                .title(event.getTitle())
+                .build();
+    }
 }

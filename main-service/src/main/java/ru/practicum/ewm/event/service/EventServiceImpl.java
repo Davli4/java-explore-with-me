@@ -59,7 +59,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
+    public EventCreatedDto createEvent(Long userId, NewEventDto newEventDto) {
         if (newEventDto.getDescription() != null) {
             String clean = newEventDto.getDescription().replaceAll("\\r\\n|\\r|\\n", " ");
             newEventDto.setDescription(clean);
@@ -131,7 +131,7 @@ public class EventServiceImpl implements EventService {
 
         Event savedEvent = eventRepository.save(event);
         log.info("Created event {} for user {}", savedEvent.getId(), userId);
-        return EventMapper.toEventFullDto(savedEvent);
+        return EventMapper.toEventCreatedDto(savedEvent);
     }
 
     @Override
