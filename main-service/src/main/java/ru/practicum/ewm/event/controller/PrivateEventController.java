@@ -57,13 +57,8 @@ public class PrivateEventController {
             throw new BadRequestException("Request body is missing");
         }
 
-        NewEventDto originalRequest = new NewEventDto();
-        originalRequest.setPaid(newEventDto.getPaid());
-        originalRequest.setParticipantLimit(newEventDto.getParticipantLimit());
-        originalRequest.setRequestModeration(newEventDto.getRequestModeration());
-
         log.info("POST /users/{}/events - Creating new event", userId);
-        return eventService.createEvent(userId, newEventDto,  originalRequest);
+        return eventService.createEvent(userId, newEventDto);
     }
 
     @GetMapping("/{eventId}")
