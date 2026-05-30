@@ -448,11 +448,10 @@ public class EventServiceImpl implements EventService {
         int currentConfirmed = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         int availableSlots = event.getParticipantLimit() - currentConfirmed;
 
-        if (availableSlots <= 0) {
+        if (availableSlots <= 0 && updateRequest.getStatus() == RequestStatus.CONFIRMED) {
             throw new ConflictException("The participant limit has been reached");
         }
 
-        EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult();
         List<Request> confirmedRequests = new ArrayList<>();
         List<Request> rejectedRequests = new ArrayList<>();
 
@@ -466,28 +465,34 @@ public class EventServiceImpl implements EventService {
                     request.setStatus(RequestStatus.REJECTED);
                     rejectedRequests.add(request);
                 }
-                requestRepository.save(request);
             }
-            result.setConfirmedRequests(confirmedRequests.stream()
-                    .map(RequestMapper::toParticipationRequestDto)
-                    .collect(Collectors.toList()));
-            result.setRejectedRequests(rejectedRequests.stream()
-                    .map(RequestMapper::toParticipationRequestDto)
-                    .collect(Collectors.toList()));
+            if (!confirmedRequests.isEmpty()) {
+                requestRepository.saveAll(confirmedRequests);
+            }
+            if (!rejectedRequests.isEmpty()) {
+                requestRepository.saveAll(rejectedRequests);
+            }
         } else if (updateRequest.getStatus() == RequestStatus.REJECTED) {
             for (Request request : requests) {
                 request.setStatus(RequestStatus.REJECTED);
-                requestRepository.save(request);
                 rejectedRequests.add(request);
             }
-            result.setRejectedRequests(rejectedRequests.stream()
-                    .map(RequestMapper::toParticipationRequestDto)
-                    .collect(Collectors.toList()));
+            if (!rejectedRequests.isEmpty()) {
+                requestRepository.saveAll(rejectedRequests);
+            }
         }
 
         int newConfirmedCount = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         event.setConfirmedRequests(newConfirmedCount);
         eventRepository.save(event);
+
+        EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult();
+        result.setConfirmedRequests(confirmedRequests.stream()
+                .map(RequestMapper::toParticipationRequestDto)
+                .collect(Collectors.toList()));
+        result.setRejectedRequests(rejectedRequests.stream()
+                .map(RequestMapper::toParticipationRequestDto)
+                .collect(Collectors.toList()));
 
         return result;
     }
