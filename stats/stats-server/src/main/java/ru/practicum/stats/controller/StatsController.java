@@ -31,6 +31,14 @@ public class StatsController {
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") Boolean unique) {
 
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Start and end dates are required");
+        }
+
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date must be before end date");
+        }
+
         return service.getStats(start, end, uris, unique);
     }
 }
