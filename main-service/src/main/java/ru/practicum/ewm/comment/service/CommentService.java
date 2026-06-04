@@ -12,7 +12,6 @@ public interface CommentService {
     void deleteCommentByUser(Long userId, Long commentId);
 
     void deleteCommentByAdmin(Long commentId);
-
     List<CommentDto> getCommentsByEvent(Long eventId, Integer from, Integer size);
     CommentDto getCommentById(Long commentId);
 }
