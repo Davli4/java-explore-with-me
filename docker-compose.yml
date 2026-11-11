@@ -29,6 +29,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://stats-db:5432/stats
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+      TZ: Europe/Minsk
+      JAVA_TOOL_OPTIONS: -Duser.timezone=Europe/Minsk
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9090/actuator/health"]
       interval: 10s
@@ -71,6 +73,18 @@ services:
       SPRING_DATASOURCE_PASSWORD: root
       STATS_SERVER_URL: http://stats-server:9090
       SPRING_PROFILES_ACTIVE: ci
+      TZ: Europe/Minsk
+      JAVA_TOOL_OPTIONS: -Duser.timezone=Europe/Minsk
+    networks:
+      - explore-network
+
+  ewm-frontend:
+    build: frontend
+    container_name: ewm-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - ewm-service
     networks:
       - explore-network
 
