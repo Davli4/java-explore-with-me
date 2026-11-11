@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Досуг вместе — афиша событий</title>
+  <meta name="description" content="Информационная система для организации коллективного досуга">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='7' fill='%234f46e5'/></svg>">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="header" class="header"></header>
+  <main id="app" class="container"></main>
+  <footer class="footer container">
+    <span>«Досуг вместе» — информационная система для организации коллективного досуга</span>
+    <span class="muted">Время событий указано по Минску</span>
+  </footer>
+  <div id="modal-root"></div>
+  <div id="toasts" class="toasts"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
